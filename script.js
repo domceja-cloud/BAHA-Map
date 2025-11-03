@@ -37,26 +37,26 @@ map.on('load', () => {
   });
 
   // 3) Click event for popups
-  map.on('click', 'points-layer', (e) => {
-    const coordinates = e.features[0].geometry.coordinates.slice();
-    const properties = e.features[0].properties;
+map.on('click', 'points-layer', (e) => {
+  const coordinates = e.features[0].geometry.coordinates.slice();
+  const properties = e.features[0].properties;
 
-    const popupContent = `
-      <div>
-        <h3>${properties.Landmark}</h3>
-        <p><strong>Address:</strong> ${properties.Address}</p>
-        <p><strong>Architect & Date:</strong> ${properties.Architect} ${properties.Date}</p>
-        <p><strong>Designated:</strong> ${properties.Designated}</p>
-        ${properties.Link ? `<p><a href="${properties.Link}" target="_blank">More Information</a></p>` : ''}
-        ${properties.Notes ? `<p><strong>Notes:</strong> ${properties.Notes}</p>` : ''}
-      </div>
-    `;
+  const popupContent = `
+    <div>
+      <h3>${properties.Landmark}</h3>
+      <p><strong>Address:</strong> ${properties.Address}</p>
+      <p><strong>Architect & Date:</strong> ${properties["Architect + Dates"] || "N/A"}</p>
+      <p><strong>Designated:</strong> ${properties.Designated}</p>
+      ${properties.Link ? `<p><a href="${properties.Link}" target="_blank">More Information</a></p>` : ''}
+      ${properties.Notes ? `<p><strong>Notes:</strong> ${properties.Notes}</p>` : ''}
+    </div>
+  `;
 
-    new mapboxgl.Popup()
-      .setLngLat(coordinates)
-      .setHTML(popupContent)
-      .addTo(map);
-  });
+  new mapboxgl.Popup()
+    .setLngLat(coordinates)
+    .setHTML(popupContent)
+    .addTo(map);
+});
 
   // 4) Pointer cursor on hover
   map.on('mouseenter', 'points-layer', () => {

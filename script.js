@@ -7,13 +7,23 @@ const map = new mapboxgl.Map({
   zoom: 9
 });
 
-map.on('load', function() {
-
+map.on('load', () => {
+  // 1) Add your GeoJSON source
+  // OPTION A: load from GitHub (needs internet)
   map.addSource('points-data', {
     type: 'geojson',
-    data: 'https://raw.githubusercontent.com/domceja-cloud/BAHA-Map/refs/heads/main/map.geojson'
+    data: 'https://raw.githubusercontent.com/domceja-cloud/BAHA-Map/main/map.geojson'
   });
 
+  // If you have map.geojson in the SAME folder as index.html, you can
+  // instead use this simpler local version:
+  //
+  // map.addSource('points-data', {
+  //   type: 'geojson',
+  //   data: 'map.geojson'
+  // });
+
+  // 2) Add a circle layer for the points
   map.addLayer({
     id: 'points-layer',
     type: 'circle',
@@ -26,6 +36,7 @@ map.on('load', function() {
     }
   });
 
+  // 3) Click event for popups
   map.on('click', 'points-layer', (e) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const properties = e.features[0].properties;
@@ -47,6 +58,7 @@ map.on('load', function() {
       .addTo(map);
   });
 
+  // 4) Pointer cursor on hover
   map.on('mouseenter', 'points-layer', () => {
     map.getCanvas().style.cursor = 'pointer';
   });

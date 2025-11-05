@@ -1,67 +1,110 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiY3dpbG1vdHQiLCJhIjoiY2s2bWRjb2tiMG1xMjNqcDZkbGNjcjVraiJ9.2nNOYL23A1cfZSE4hdC9ew';
+mapboxgl.accessToken =
+  "pk.eyJ1IjoiY3dpbG1vdHQiLCJhIjoiY2s2bWRjb2tiMG1xMjNqcDZkbGNjcjVraiJ9.2nNOYL23A1cfZSE4hdC9ew";
 
 const map = new mapboxgl.Map({
-  container: 'map', // container ID
-  style: 'mapbox://styles/cwilmott/cmg5px11u00ef01sm3fr65ro0',
-  center: [-122.27, 37.8], // [lng, lat]
+  container: "map",
+  style: "mapbox://styles/cwilmott/cmg5px11u00ef01sm3fr65ro0",
+  center: [-122.27, 37.8],
   zoom: 9
 });
 
-map.on('load', () => {
-  // 1️⃣ Add GeoJSON source
-  map.addSource('points-data', {
-    type: 'geojson',
-    data: 'https://raw.githubusercontent.com/domceja-cloud/BAHA-Map/main/map.geojson'
+// 🧭 Navigation control (zoom + compass)
+map.addControl(
+  new mapboxgl.NavigationControl({
+    visualizePitch: true,
+    showZoom: true,
+    showCompass: true
+  }),
+  "top-right"
+);
+
+// 📍 Geolocate control
+map.addControl(
+  new mapboxgl.GeolocateControl({
+    positionOptions: { enableHighAccuracy: true },
+    trackUserLocation: true,
+    showUserHeading: true
+  }),
+  "top-right"
+);
+
+map.on("load", () => {
+  // 1️⃣ Add GeoJSON source (generateId so we can use feature-state for hover)
+  map.addSource("points-data", {
+    type: "geojson",
+    data: "https://raw.githubusercontent.com/domceja-cloud/BAHA-Map/main/map.geojson",
+    generateId: true
   });
 
-  // 2️⃣ Add circle layer for markers
+  // 2️⃣ Circle markers (with hover glow)
   map.addLayer({
-    id: 'points-layer',
-    type: 'circle',
-    source: 'points-data',
+    id: "points-layer",
+    type: "circle",
+    source: "points-data",
     paint: {
-      'circle-color': '#4264FB',
-      'circle-radius': 6,
-      'circle-stroke-width': 2,
-      'circle-stroke-color': '#ffffff'
+      "circle-color": "#4264FB",
+      "circle-radius": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        9, // slightly larger when hovered
+        6  // default radius
+      ],
+      "circle-stroke-width": 2,
+      "circle-stroke-color": "#ffffff",
+      "circle-opacity": [
+        "case",
+        ["boolean", ["feature-state", "hover"], false],
+        1,
+        0.75
+      ]
     }
   });
 
-  // 3️⃣ Add text label layer using the "Landmark" property
+  // 3️⃣ Text labels above markers
   map.addLayer(
     {
-      id: 'points-labels',
-      type: 'symbol',
-      source: 'points-data',
+      id: "points-labels",
+      type: "symbol",
+      source: "points-data",
       layout: {
-        'text-field': ['get', 'Landmark'], // pull label text from the Landmark field
-        'text-font': ['Open Sans Semibold', 'Arial Unicode MS Bold'],
-        'text-size': 11,
-        'text-offset': [0, 1.2], // move label slightly above the circle
-        'text-anchor': 'top'
+        "text-field": ["get", "Landmark"],
+        "text-font": ["Open Sans Semibold", "Arial Unicode MS Bold"],
+        "text-size": 11,
+        "text-offset": [0, 1.2],
+        "text-anchor": "top"
       },
       paint: {
-        'text-color': '#0b2540',
-        'text-halo-color': '#ffffff',
-        'text-halo-width': 1
+        "text-color": "#0b2540",
+        "text-halo-color": "#ffffff",
+        "text-halo-width": 1
       }
     },
-    'points-layer' // ensures labels appear above the circles
+    "points-layer"
   );
 
-  // 4️⃣ Click event for popups
-  map.on('click', 'points-layer', (e) => {
+  // 4️⃣ Click popups
+  map.on("click", "points-layer", (e) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const properties = e.features[0].properties;
 
     const popupContent = `
-      <div>
+      <div class="popup-inner">
         <h3>${properties.Landmark}</h3>
         <p><strong>Address:</strong> ${properties.Address}</p>
-        <p><strong>Architect & Date:</strong> ${properties["Architect + Dates"] || "N/A"}</p>
+        <p><strong>Architect & Date:</strong> ${
+          properties["Architect + Dates"] || "N/A"
+        }</p>
         <p><strong>Designated:</strong> ${properties.Designated}</p>
-        ${properties.Link ? `<p><a href="${properties.Link}" target="_blank">More Information</a></p>` : ''}
-        ${properties.Notes ? `<p><strong>Notes:</strong> ${properties.Notes}</p>` : ''}
+        ${
+          properties.Link
+            ? `<p><a href="${properties.Link}" target="_blank">More Information</a></p>`
+            : ""
+        }
+        ${
+          properties.Notes
+            ? `<p><strong>Notes:</strong> ${properties.Notes}</p>`
+            : ""
+        }
       </div>
     `;
 
@@ -71,12 +114,62 @@ map.on('load', () => {
       .addTo(map);
   });
 
-  // 5️⃣ Change cursor on hover
-  map.on('mouseenter', 'points-layer', () => {
-    map.getCanvas().style.cursor = 'pointer';
+  // 5️⃣ Hover glow effect using feature-state
+  let hoveredId = null;
+
+  map.on("mouseenter", "points-layer", () => {
+    map.getCanvas().style.cursor = "pointer";
   });
 
-  map.on('mouseleave', 'points-layer', () => {
-    map.getCanvas().style.cursor = '';
+  map.on("mousemove", "points-layer", (e) => {
+    if (!e.features.length) return;
+
+    const feature = e.features[0];
+
+    if (hoveredId !== null) {
+      map.setFeatureState(
+        { source: "points-data", id: hoveredId },
+        { hover: false }
+      );
+    }
+
+    hoveredId = feature.id;
+
+    map.setFeatureState(
+      { source: "points-data", id: hoveredId },
+      { hover: true }
+    );
+  });
+
+  map.on("mouseleave", "points-layer", () => {
+    if (hoveredId !== null) {
+      map.setFeatureState(
+        { source: "points-data", id: hoveredId },
+        { hover: false }
+      );
+    }
+    hoveredId = null;
+    map.getCanvas().style.cursor = "";
+  });
+
+  // 6️⃣ Auto-fit to all points once everything is drawn
+  map.once("idle", () => {
+    const source = map.getSource("points-data");
+    if (!source) return;
+
+    const raw = /** @type {any} */ (source);
+    const data = raw._data || (raw._options && raw._options.data);
+    if (!data || !data.features) return;
+
+    const bounds = new mapboxgl.LngLatBounds();
+    data.features.forEach((feature) => {
+      if (feature.geometry && feature.geometry.type === "Point") {
+        bounds.extend(feature.geometry.coordinates);
+      }
+    });
+
+    if (!bounds.isEmpty()) {
+      map.fitBounds(bounds, { padding: 40 });
+    }
   });
 });

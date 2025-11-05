@@ -1,15 +1,195 @@
-body {
-  font-family: system-ui;
-  background: #f06d06;
-  color: white;
-  text-align: center;
-}
+/* Base layout and background */
+html,
 body {
   margin: 0;
   padding: 0;
+  height: 100%;
+  background: #fdf9f6; /* soft paper-cream tone */
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+    animation: fadeIn 1.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
+
 #map {
+  width: 100%;
+  height: 100vh; /* Map fills the window */
+  box-shadow: 0 0 30px rgba(0, 0, 0, 0.08); /* subtle lift */
+  border-radius: 10px;
+}
+
+/* Title/Header overlay */
+.map-title {
   position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 100%; }
+  top: 18px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  background: rgba(220, 201, 232, 0.96);
+  padding: 10px 22px;
+  border-radius: 999px;
+  box-shadow: 0 2px 8px rgba(15, 23, 42, 0.18);
+  text-align: center;
+}
+
+.map-title h1 {
+  margin: 0;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 20px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #222222;
+}
+
+.map-title p {
+  margin: 3px 0 0 0;
+  font-size: 12px;
+  color: #555555;
+}
+
+/* Legend */
+.legend {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  background: #ffffff;
+  padding: 10px 12px;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.25);
+  font-size: 13px;
+  z-index: 2;
+}
+
+.legend h4 {
+  margin: 0 0 6px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1d1d1d;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-key {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #4264fb;
+  border: 2px solid #ffffff;
+}
+
+.legend-label {
+  white-space: nowrap;
+  color: #222222;
+}
+
+/* Popups */
+.mapboxgl-popup-content {
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  padding: 10px 14px;
+  border-radius: 10px;
+  box-shadow: 0 8px 20px rgba(15, 23, 42, 0.25);
+  background: #ffffff;
+}
+
+.mapboxgl-popup-close-button {
+  font-size: 16px;
+  color: #444;
+}
+
+.popup-inner h3 {
+  margin: 0 0 6px 0;
+  font-family: "Playfair Display", "Times New Roman", serif;
+  font-size: 16px;
+  color: #222222;
+}
+
+.popup-inner p {
+  margin: 2px 0;
+  font-size: 13px;
+  color: #333333;
+}
+
+.popup-inner a {
+  color: #4264fb;
+  text-decoration: underline;
+}
+
+/* Tint the compass slightly to match the blue markers */
+.mapboxgl-ctrl-compass .mapboxgl-ctrl-icon {
+  filter: hue-rotate(210deg) brightness(1.2);
+}
+
+/* Soft fade-in for header and legend */
+.map-title,
+.legend {
+  opacity: 0;
+  animation: fadeIn 1.2s ease-out forwards;
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.08);
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.map-credit {
+  position: absolute;
+  bottom: 10px;
+  right: 20px;
+  font-size: 11px;
+  color: #666666;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-family: "DM Sans", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+}
+/* --------------------------------------------
+   🖋 Map Footer / Credit Line
+-------------------------------------------- */
+.map-footer {
+  position: absolute;
+  bottom: 6px;
+  right: 20px;
+  text-align: right;
+  font-size: 11px;
+  color: #666666;
+  font-family: "DM Sans", sans-serif;
+}
+
+.footer-line {
+  height: 1px;
+  background: rgba(166, 130, 255, 0.4);
+  margin-bottom: 4px;
+  width: 240px;
+  margin-left: auto;
+}
+
+.map-credit {
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+.map-credit a {
+  color: #4264fb;
+  text-decoration: none;
+}
+
+.map-credit a:hover {
+  text-decoration: underline;
+}

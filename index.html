@@ -1,19 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
-
   <head>
-    <meta charset="UTF-8">
-    <title>MapBox BaseMap</title>
-    <link rel="stylesheet" href="./style.css">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Berkeley Landmarks Map</title>
 
+    <!-- 🗺️ Mapbox CSS -->
+    <link
+      href="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.css"
+      rel="stylesheet"
+    />
+
+    <!-- ✒️ Fonts: Playfair Display + DM Sans -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500&family=Playfair+Display:wght@600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- 🎨 Custom Styles -->
+    <link rel="stylesheet" href="./style.css" />
+
+    <!-- 
+      --------------------------------------------
+      CARTOGRAPHY METADATA
+      --------------------------------------------
+      Map Title: Berkeley Landmarks
+      Cartographer: Dominic Ceja
+      Year of Production: 2025
+      Map Data Sources:
+        - Base Map: © Mapbox, © OpenStreetMap contributors
+        - Landmark Data: Berkeley Architectural Heritage Association (BAHA)
+      Tools Used: Mapbox GL JS, Visual Studio Code, Live Server
+      --------------------------------------------
+    -->
   </head>
-    
-  <body>
-  <div id="map">
-</div>
-<script src='https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js'></script>
-    <script  src="./script.js"></script>
 
+  <body>
+    <!-- 🗺️ Map Container -->
+    <div id="map"></div>
+
+    <!-- 🏛️ Title Overlay -->
+    <div class="map-title">
+      <h1>BERKELEY LANDMARKS</h1>
+      <p>
+        Selected historic sites across
+        <span style="color: #4264fb; font-weight: 500;">Downtown</span> &
+        Northside
+      </p>
+      <p style="margin-top: 4px; font-size: 12px; color: #555;">
+        Tracing the quiet poetry of Berkeley’s built history — where memory lives in brick and light.
+      </p>
+    </div>
+    
+
+    <!-- 🗝️ Legend -->
+    <div class="legend">
+      <h4>Berkeley Landmarks</h4>
+      <div class="legend-item">
+        <div class="legend-key"></div>
+        <div class="legend-label">Historic Landmark</div>
+      </div>
+    </div>
+
+<!-- ✍️ Cartographer Credit -->
+<div class="map-footer">
+  <div class="footer-line"></div>
+  <div class="map-credit">
+    Cartography by Dominic Ceja • 2025 |
+    Data © Mapbox, OpenStreetMap, & Berkeley Architectural Heritage Association
+    (<a href="https://berkeleyheritage.com/berkeley_landmarks/landmarks1-100.html" target="_blank">BAHA</a>)
+  </div>
+</div>
+
+    <!-- 🧩 Mapbox JS -->
+    <script src="https://api.mapbox.com/mapbox-gl-js/v3.15.0/mapbox-gl.js"></script>
+
+    <!-- ⚙️ Custom JS -->
+    <script src="./script.js"></script>
   </body>
-  
 </html>

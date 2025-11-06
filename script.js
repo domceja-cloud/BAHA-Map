@@ -42,8 +42,8 @@ map.on("load", () => {
       "circle-radius": [
         "case",
         ["boolean", ["feature-state", "hover"], false],
-        9, // slightly larger when hovered
-        6  // default radius
+        9, 
+        6  
       ],
       "circle-stroke-width": 2,
       "circle-stroke-color": "#ffffff",

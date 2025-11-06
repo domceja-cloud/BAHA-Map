@@ -8,7 +8,6 @@ const map = new mapboxgl.Map({
   zoom: 9
 });
 
-// 🧭 Navigation control (zoom + compass)
 map.addControl(
   new mapboxgl.NavigationControl({
     visualizePitch: true,
@@ -18,7 +17,6 @@ map.addControl(
   "top-right"
 );
 
-// 📍 Geolocate control
 map.addControl(
   new mapboxgl.GeolocateControl({
     positionOptions: { enableHighAccuracy: true },
@@ -29,14 +27,12 @@ map.addControl(
 );
 
 map.on("load", () => {
-  // 1️⃣ Add GeoJSON source (generateId so we can use feature-state for hover)
   map.addSource("points-data", {
     type: "geojson",
     data: "https://raw.githubusercontent.com/domceja-cloud/BAHA-Map/main/map.geojson",
     generateId: true
   });
 
-  // 2️⃣ Circle markers (with hover glow)
   map.addLayer({
     id: "points-layer",
     type: "circle",
@@ -60,7 +56,6 @@ map.on("load", () => {
     }
   });
 
-  // 3️⃣ Text labels above markers
   map.addLayer(
     {
       id: "points-labels",
@@ -82,7 +77,6 @@ map.on("load", () => {
     "points-layer"
   );
 
-  // 4️⃣ Click popups
   map.on("click", "points-layer", (e) => {
     const coordinates = e.features[0].geometry.coordinates.slice();
     const properties = e.features[0].properties;
@@ -114,7 +108,6 @@ map.on("load", () => {
       .addTo(map);
   });
 
-  // 5️⃣ Hover glow effect using feature-state
   let hoveredId = null;
 
   map.on("mouseenter", "points-layer", () => {
@@ -152,7 +145,6 @@ map.on("load", () => {
     map.getCanvas().style.cursor = "";
   });
 
-  // 6️⃣ Auto-fit to all points once everything is drawn
   map.once("idle", () => {
     const source = map.getSource("points-data");
     if (!source) return;
